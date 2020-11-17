@@ -1,0 +1,46 @@
+# This is a GitHub workflow defining a set of jobs with a set of steps.
+# ref: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+#
+name: Build and push
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # https://crontab.guru/#0_0_*_*_*
+  push:
+    branches: ["main"]
+    tags: ["**"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup push rights to Docker Hub
+        # This was setup by...
+        # 1. Creating a Docker Hub service account "jupyterhubbot"
+        # 2. Making the account part of the "bots" team, and granting that team
+        #    permissions to push to the relevant images:
+        #    https://hub.docker.com/orgs/jupyterhub/teams/bots/permissions
+        # 3. Registering the username and password as a secret for this repo:
+        #    https://github.com/jupyterhub/zero-to-jupyterhub-k8s/settings/secrets/actions
+        #
+        run: |
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push
+        run: |
+          if [[ $GITHUB_REF != refs/tags/* ]]; then
+              docker build . \
+                  --tag jupyterhub/binderhub-ci-repos_minimal-dockerfile:latest
+              docker push jupyterhub/binderhub-ci-repos_minimal-dockerfile:latest
+          else
+              docker build . \
+                  --tag jupyterhub/binderhub-ci-repos_minimal-dockerfile:latest \
+                  --tag jupyterhub/binderhub-ci-repos_minimal-dockerfile:${GITHUB_REF:10}
+              docker push jupyterhub/binderhub-ci-repos_minimal-dockerfile:latest
+              docker push jupyterhub/binderhub-ci-repos_minimal-dockerfile:${GITHUB_REF:10}
+          fi
