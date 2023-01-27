@@ -1,5 +1,4 @@
-FROM python:3.11-slim
+FROM docker.io/mambaorg/micromamba:latest
 # Authenticated BinderHub requires jupyterhub-singleuser
-RUN pip install --no-cache notebook jupyterlab jupyterhub
-RUN useradd -m jovyan
-USER jovyan
+RUN micromamba install -n base -y --log-level warning -c conda-forge notebook jupyterlab jupyterhub
+# Default USER is mambauser
