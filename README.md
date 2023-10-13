@@ -1,6 +1,6 @@
 # About
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/binderhub-ci-repos/minimal-dockerfile/Build%20and%20push?logo=github&label=Build%20and%20push%20cron%20job)](https://github.com/binderhub-ci-repos/minimal-dockerfile/actions)
+[![GitHub Workflow Status](https://github.com/binderhub-ci-repos/minimal-dockerfile/actions/workflows/build-and-push-cron.yaml/badge.svg)](https://github.com/binderhub-ci-repos/minimal-dockerfile/actions/workflows/build-and-push-cron.yaml)
 
 This repository is built and published every night to
 [DockerHub](https://hub.docker.com/repository/docker/jupyterhub/binderhub-ci-repos_minimal-dockerfile)
